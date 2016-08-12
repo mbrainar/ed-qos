@@ -32,6 +32,3 @@ def get_ticket():
 		return r.json()[u'response'][u'serviceTicket']
 	else:
 		r.raise_for_status()
-
-
-print(get_ticket())
