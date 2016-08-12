@@ -46,7 +46,7 @@ echo Installed
 echo "Wait 2-3 minutes for the service to deploy. "
 echo "Then you can visit your application at:  "
 echo
-echo "http://class-$docker_username.$mantl_domain/hello/world"
+echo "http://imapex-$docker_username.$mantl_domain/hello/world"
 echo
 echo
 echo "You can also watch the progress from the GUI at: "
