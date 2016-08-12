@@ -90,3 +90,6 @@ ENV/
 
 # PyCharm settings
 .idea
+
+# don't commit secrets!
+drone_secrets.yml
