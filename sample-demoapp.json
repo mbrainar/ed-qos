@@ -2,7 +2,7 @@
     "container": {
         "type": "DOCKER",
         "docker": {
-            "image": "DOCKERUSER/cicd_demoapp:latest",
+            "image": "DOCKERUSER/ed-qos:latest",
             "forcePullImage": true,
             "network": "BRIDGE",
             "portMappings": [{
@@ -16,7 +16,7 @@
         "protocol": "TCP",
         "portIndex": 0
     }],
-    "id": "/class/DOCKERUSER",
+    "id": "/imapex/ed-qos/DOCKERUSER",
     "instances": 1,
     "cpus": 0.1,
     "mem": 16,
