@@ -21,5 +21,8 @@
     "cpus": 0.1,
     "mem": 16,
     "env": {
+      "APIC_SERVER": "sandboxapic.cisco.com",
+      "APIC_USERNAME": "devnetuser",
+      "APIC_PASSWORD": "Cisco123!"
     }
 }
