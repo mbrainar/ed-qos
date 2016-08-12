@@ -1,10 +1,13 @@
-# boilerplate - Hello World
+# Event Driven QoS
 
 Any applicable badges (build/documentation/collaboration/licenses should go here
 
 # Description
 
-Boilerplate is a starting point application for the IMAPEX team @ Cisco.
+Event Driven QoS is a simple demo application illustrating programmatic control
+of APIC-EM to change QoS parameters in an attached network. This is driven by
+an external event. In the initial implementation, the external event source is
+changes in the weather; other event sources are planned.
 
 
 # Installation
@@ -25,11 +28,11 @@ Option A:
 
 If you have git installed, clone the repository
 
-    git clone https://github.com/imapex/boilerplate
+    git clone https://github.com/imapex/ed-qos
 
 Option B:
 
-If you don't have git, [download a zip copy of the repository](https://github.com/imapex/boilerplate/archive/master.zip)
+If you don't have git, [download a zip copy of the repository](https://github.com/imapex/ed-qos/archive/master.zip)
 and extract.
 
 Option C:
@@ -86,4 +89,3 @@ and an HTML report of the code coverage can be generated with the command::
 # License
 
 Include any applicable licenses here as well as LICENSE.TXT in the root of the repository
-
