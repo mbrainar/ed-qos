@@ -19,9 +19,9 @@ import os
 
 
 def get_ticket():
-	apic = os.environ['APIC_SERVER']
-	username = os.environ['APIC_USERNAME']
-	password = os.environ['APIC_PASSWORD']
+	apic = os.environ.get['APIC_SERVER']
+	username = os.environ.get['APIC_USERNAME']
+	password = os.environ.get['APIC_PASSWORD']
 
 	reqUrl = "https://{0}/api/v1/ticket".format(apic)
 	payload = {'username': username, 'password': password}
