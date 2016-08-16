@@ -10,7 +10,17 @@ def getAPIKey():
     wundergroundKey = os.environ["WUNDERGROUND_KEY"]
     return wundergroundKey
 
-def getCurrentConditions(state, city):
+def getCity():
+    city = os.environ["WEATHER_CITY"]
+    return city
+
+def getState():
+    state = os.environ["WEATHER_STATE"]
+    return state
+
+def getCurrentConditions():
+    city = getCity()
+    state = getState()
     wundergroundKey = getAPIKey()
     currentConditionsURL = "http://api.wunderground.com/api/"+wundergroundKey+"/conditions/q/"+state+"/"+city+".json"
     response = requests.get(currentConditionsURL)
@@ -25,6 +35,6 @@ def getWeather(currentConditions):
     currentWeather = currentConditions["current_observation"]["weather"]
     return currentWeather
 
-#print json.dumps(getCurrentConditions("OH","Marblehead"), indent=4)
-print getTemp(getCurrentConditions("OH","Marblehead"))
-print getWeather(getCurrentConditions("OH","Marblehead"))
+#print json.dumps(getCurrentConditions(), indent=4)
+#print getTemp(getCurrentConditions())
+#print getWeather(getCurrentConditions())
