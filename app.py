@@ -15,7 +15,7 @@ def check_ticket():
 
 @app.route('/weather/')
 def check_weather():
-    return weather.getTemp(weather.getCurrentConditions())
+    return weather.getCurrentConditions()
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
