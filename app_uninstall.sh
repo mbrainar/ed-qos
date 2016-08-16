@@ -16,8 +16,8 @@ echo "What is the your Docker Username?  "
 read docker_username
 echo
 
-echo "Uninstalling the demoapp at class/$docker_username"
-curl -k -X DELETE -u $mantl_user:$mantl_password https://$control_address:8080/v2/apps/class/$docker_username \
+echo "Uninstalling the demoapp at imapex/ed-qos/$docker_username"
+curl -k -X DELETE -u $mantl_user:$mantl_password https://$control_address:8080/v2/apps/imapex/ed-qos/$docker_username \
 -H "Content-type: application/json"
 echo
 
