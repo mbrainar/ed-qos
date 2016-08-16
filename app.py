@@ -20,7 +20,7 @@ def check_weather():
     state = weather.getState()
     temp = weather.getTemp(weather.getCurrentConditions())
     weather_description = weather.getWeather(weather.getCurrentConditions())
-    weather_string = "The current weather in "city+", "state+" is "+str(temp)+" and "+weather_description
+    weather_string = "The current weather in "city+", "+state+" is "+str(temp)+" and "+weather_description
     return weather_string
 
 if __name__ == '__main__':
