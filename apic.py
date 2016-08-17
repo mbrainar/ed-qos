@@ -32,3 +32,15 @@ def get_ticket():
 		return r.json()[u'response'][u'serviceTicket']
 	else:
 		r.raise_for_status()
+
+def get_appid(ticket):
+        reqUrl = "https://{0}/api/v1/application".format(apic)
+        headers = {'X-Auth-Token': ticket, 'Content-Type': 'application/json'}
+	parameters = {'name': 'netflix'}
+
+        r = requests.post(reqUrl, json=payload)
+
+        if (r.status_code == 200):
+                return r.json()[u'response'][u'id']
+        else:
+                r.raise_for_status()	
