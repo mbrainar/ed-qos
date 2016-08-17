@@ -21,8 +21,11 @@
     "cpus": 0.1,
     "mem": 16,
     "env": {
-      "APIC_SERVER": "sandboxapic.cisco.com",
-      "APIC_USERNAME": "devnetuser",
-      "APIC_PASSWORD": "Cisco123!"
+        "APIC_SERVER": "sandboxapic.cisco.com",
+        "APIC_USERNAME": "devnetuser",
+        "APIC_PASSWORD": "Cisco123!",
+        "WUNDERGROUND_KEY": "1a4cfd9f4a9cb138",
+        "WEATHER_STATE": "CA",
+        "WEATHER_CITY": "San Jose"
     }
 }
