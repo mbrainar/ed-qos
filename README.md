@@ -1,6 +1,6 @@
 # Event Driven QoS
 
-Any applicable badges (build/documentation/collaboration/licenses should go here
+[![](https://images.microbadger.com/badges/version/sluzynsk/ed-qos.svg)](http://microbadger.com/images/sluzynsk/ed-qos "Get your own version badge on microbadger.com")
 
 # Description
 

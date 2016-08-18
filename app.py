@@ -8,11 +8,13 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello_world():
-    return 'Hello, IMAPEX!'
+    return "This is the event driven Qos Application. Please see http://github.com/imapex/ed-qos for more information"
 
-@app.route('/ticket/')
+@app.route('/apic-test/')
 def check_ticket():
-    return apic.get_ticket()
+    ticket = apic.get_ticket()
+    answer_string = "ticket:" + ticket + " appId: " + apic.get_appid(ticket)
+    return answer_string
 
 @app.route('/weather/')
 def check_weather():
