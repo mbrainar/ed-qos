@@ -14,7 +14,7 @@ class FlaskTestCase(unittest.TestCase):
 
     def test_correct_content(self):
         resp = self.app.get('/')
-        self.assertEquals(resp.data, 'Hello, IMAPEX!')
+        self.assertEquals(resp.data, "This is the event driven Qos Application. Please see http://github.com/imapex/ed-qos for more information")
 
     def tearDown(self):
         pass
