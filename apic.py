@@ -12,6 +12,7 @@ __author__ = 'sluzynsk'
 
 import requests
 import os
+import json
 
 # To DOs:
 # get service ticket, get application ID, install new policy,
@@ -47,4 +48,23 @@ def get_app_id(service_ticket, app_name):
     else:
         r.raise_for_status()
 
-#print get_app_id(get_ticket(), "facebook")
+def get_app_state(service_ticket, policy_scope, app_name):
+    apic = os.environ.get('APIC_SERVER')
+
+    reqUrl = "https://{0}/api/v1/policy?policyScope={1}".format(apic, policy_scope)
+    header = {"X-Auth-Token": service_ticket}
+
+    r = requests.get(reqUrl, headers=header)
+
+    if (r.status_code == 200):
+        for item in r.json()['response']:
+            if item['actionProperty']['relevanceLevel'] == "Business-Relevant":
+                #print item['resource']['applications']
+                app_id = get_app_id(service_ticket, app_name)
+                #print app_id
+                if {'appName': app_name, 'id': app_id} in item['resource']['applications']:
+                    return True
+                else:
+                    return False
+    else:
+        r.raise_for_status()
