@@ -88,5 +88,3 @@ def update_app_state(event_status, service_ticket, policy_scope, app_name):
             out = "FT"
 
     return out
-
-print update_app_state(True, get_ticket(), "ed-qos", "facebook")

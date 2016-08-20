@@ -20,7 +20,7 @@ def check_ticket():
 @app.route('/status/')
 def get_status():
     # ticket = apic.get_ticket()
-    if (event_status == False):
+    if (1):
         answer_string = "All is clear!"
     else:
         answer_string = "Currently in emergency state"
