@@ -20,7 +20,7 @@ def check_ticket():
 @app.route('/status/')
 def get_status():
     # ticket = apic.get_ticket()
-    if (1):
+    if (event_status == False):
         answer_string = "All is clear!"
     else:
         answer_string = "Currently in emergency state"
@@ -29,12 +29,14 @@ def get_status():
 
 @app.route('/event/on/')
 def event_on():
-    return "enabled emergency state"
+    event_status = True
+    return apic.update_app_state(event_status,apic.get_ticket(),"ed-qos","facebook")
 
 
 @app.route('/event/off/')
 def event_off():
-    return "back to normal mode"
+    event_status = False
+    return apic.update_app_state(event_status,apic.get_ticket(),"ed-qos","facebook")
 
 
 @app.route('/weather/')

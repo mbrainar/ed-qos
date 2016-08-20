@@ -48,6 +48,7 @@ def get_app_id(service_ticket, app_name):
     else:
         r.raise_for_status()
 
+
 def get_app_state(service_ticket, policy_scope, app_name):
     apic = os.environ.get('APIC_SERVER')
 
@@ -67,14 +68,25 @@ def get_app_state(service_ticket, policy_scope, app_name):
     else:
         r.raise_for_status()
 
-'''
-def update_app_state(event_status, ):
+
+def update_app_state(event_status, service_ticket, policy_scope, app_name):
     apic = os.environ.get('APIC_SERVER')
 
-    reqUrl = "https://{0}/api/v1/policy?policyScope={1}".format(apic, policy_scope)
-    header = {"X-Auth-Token": service_ticket}
+    if event_status == True:
+        if get_app_state(service_ticket, policy_scope, app_name) == True:
+            #event start trigger, maintain state
+            out = "TT"
+        else:
+            #event start trigger, change the policy here (promote)
+            out = "TF"
+    else:
+        if get_app_state(service_ticket, policy_scope, app_name) == False:
+            #event end trigger, maintain state
+            out = "FF"
+        else:
+            #event end trigger, change the policy here (demote)
+            out = "FT"
 
-    r = requests.get(reqUrl, headers=header)
+    return out
 
-    if (r.status_code == 200):
-'''
+print update_app_state(True, get_ticket(), "ed-qos", "facebook")
