@@ -49,7 +49,7 @@ def get_app_id(service_ticket, app_name):
         r.raise_for_status()
 
 
-def get_app_state(service_ticket, policy_scope, app_name):
+def get_policy(service_ticket, policy_scope):
     apic = os.environ.get('APIC_SERVER')
 
     reqUrl = "https://{0}/api/v1/policy?policyScope={1}".format(apic, policy_scope)
@@ -57,34 +57,39 @@ def get_app_state(service_ticket, policy_scope, app_name):
 
     r = requests.get(reqUrl, headers=header)
 
-    if (r.status_code == 200):
-        for item in r.json()['response']:
-            if item['actionProperty']['relevanceLevel'] == "Business-Relevant":
-                app_id = get_app_id(service_ticket, app_name)
-                if {'appName': app_name, 'id': app_id} in item['resource']['applications']:
-                    return True
-                else:
-                    return False
+    if r.status_code == 200:
+        return r.json()
     else:
         r.raise_for_status()
+
+
+def get_app_state(service_ticket, policy_scope, app_name):
+    policy = get_policy(service_ticket, policy_scope)
+    app_id = get_app_id(service_ticket, app_name)
+
+    for item in policy['response']:
+        if {'appName': app_name, 'id': app_id} in item['resource']['applications']:
+            return item['actionProperty']['relevanceLevel']
+        else:
+            continue
 
 
 def update_app_state(event_status, service_ticket, policy_scope, app_name):
     apic = os.environ.get('APIC_SERVER')
 
     if event_status == True:
-        if get_app_state(service_ticket, policy_scope, app_name) == True:
-            #event start trigger, maintain state
-            out = "TT"
+        if get_app_state(service_ticket, policy_scope, app_name) != "Business-Relevant":
+            #enforce change here
+            pass
         else:
-            #event start trigger, change the policy here (promote)
-            out = "TF"
+            continue
     else:
-        if get_app_state(service_ticket, policy_scope, app_name) == False:
-            #event end trigger, maintain state
-            out = "FF"
+        if get_app_state(service_ticket, policy_scope, app_name) != "Business-Irrelevant":
+            #enforce change here
+            pass
         else:
-            #event end trigger, change the policy here (demote)
-            out = "FT"
+            continue
 
-    return out
+
+#print json.dumps(get_policy(get_ticket(), "ed-qos"), indent=4)
+#print get_app_state(get_ticket(),"ed-qos","facebook")
