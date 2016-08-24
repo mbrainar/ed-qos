@@ -30,13 +30,19 @@ def get_status():
 @app.route('/event/on/')
 def event_on():
     event_status = True
-    return apic.update_app_state(event_status,apic.get_ticket(),"ed-qos","facebook")
+    policy_scope = "ed-qos"
+    app_name = "facebook"
+    service_ticket = apic.get_ticket()
+    return apic.put_policy_update(service_ticket,apic.update_app_state(event_status,apic.get_policy(service_ticket,policy_scope),apic.get_app_id(service_ticket,app_name),app_name),policy_scope)
 
 
 @app.route('/event/off/')
 def event_off():
     event_status = False
-    return apic.update_app_state(event_status,apic.get_ticket(),"ed-qos","facebook")
+    policy_scope = "ed-qos"
+    app_name = "facebook"
+    service_ticket = apic.get_ticket()
+    return apic.put_policy_update(service_ticket,apic.update_app_state(event_status,apic.get_policy(service_ticket,policy_scope),apic.get_app_id(service_ticket,app_name),app_name),policy_scope)
 
 
 @app.route('/weather/')
