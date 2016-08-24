@@ -4,10 +4,12 @@
 
 # Description
 
-Event Driven QoS is a simple demo application illustrating programmatic control
-of APIC-EM to change QoS parameters in an attached network. This is driven by
-an external event. In the initial implementation, the external event source is
-changes in the weather; other event sources are planned.
+Event Driven QoS is a simple demo application illustrating programmatic control of APIC-EM to change
+QoS parameters in an attached network. This is driven by an external event. In the initial implementation,
+the application will promote facebook traffic when an event is detected; the inspiration came from
+Facebook's ability to "check in" as "safe" in the event of a catastrophic event. In the initial implementation,
+the event trigger is a static URL call. The application could potentially allow for the trigger to be an
+external event, such as breaking news events, trending social media keywords, etc.
 
 
 # Installation

@@ -29,12 +29,20 @@ def get_status():
 
 @app.route('/event/on/')
 def event_on():
-    return "enabled emergency state"
+    event_status = True
+    policy_scope = "ed-qos"
+    app_name = "facebook"
+    service_ticket = apic.get_ticket()
+    return apic.put_policy_update(service_ticket,apic.update_app_state(event_status,apic.get_policy(service_ticket,policy_scope),apic.get_app_id(service_ticket,app_name),app_name),policy_scope)
 
 
 @app.route('/event/off/')
 def event_off():
-    return "back to normal mode"
+    event_status = False
+    policy_scope = "ed-qos"
+    app_name = "facebook"
+    service_ticket = apic.get_ticket()
+    return apic.put_policy_update(service_ticket,apic.update_app_state(event_status,apic.get_policy(service_ticket,policy_scope),apic.get_app_id(service_ticket,app_name),app_name),policy_scope)
 
 
 @app.route('/weather/')
