@@ -1,11 +1,11 @@
 #!/usr/bin/python
 '''
-	APIC-EM interface module for Event Driven QoS
-	This module pulls needed APIC-EM APIs into python functions.
+    APIC-EM interface module for Event Driven QoS
+    This module pulls needed APIC-EM APIs into python functions.
 
-	The application is a simple demonstration of using APIC-EM
-	dynamic QoS to modify QoS policies based on external factors
-	such as weather events, power excursions, etc.
+    The application is a simple demonstration of using APIC-EM
+    dynamic QoS to modify QoS policies based on external factors
+    such as weather events, power excursions, etc.
 '''
 
 __author__ = 'sluzynsk'
@@ -14,9 +14,11 @@ import requests
 import os
 import json
 
+# Define global variables
+apic = os.environ.get("APIC_SERVER")
 
+# Get the service ticket to be used in API calls
 def get_ticket():
-    apic = os.environ.get('APIC_SERVER')
     username = os.environ.get('APIC_USERNAME')
     password = os.environ.get('APIC_PASSWORD')
 
@@ -30,10 +32,8 @@ def get_ticket():
     else:
         r.raise_for_status()
 
-
+# Get the application ID
 def get_app_id(service_ticket, app_name):
-    apic = os.environ.get('APIC_SERVER')
-
     reqUrl = "https://{0}/api/v1/application?name={1}".format(apic, app_name)
     header = {"X-Auth-Token": service_ticket}
 
@@ -44,10 +44,8 @@ def get_app_id(service_ticket, app_name):
     else:
         r.raise_for_status()
 
-
+# Get the current policy
 def get_policy(service_ticket, policy_scope):
-    apic = os.environ.get('APIC_SERVER')
-
     reqUrl = "https://{0}/api/v1/policy?policyScope={1}".format(apic, policy_scope)
     header = {"X-Auth-Token": service_ticket}
 
@@ -58,7 +56,7 @@ def get_policy(service_ticket, policy_scope):
     else:
         r.raise_for_status()
 
-
+# Check whether the application is business relevant, irrelevant or default
 def get_app_state(policy, app_id, app_name):
     for item in policy['response']:
         if {'appName': app_name, 'id': app_id} in item['resource']['applications']:
@@ -66,10 +64,8 @@ def get_app_state(policy, app_id, app_name):
         else:
             continue
 
-
+# Rewrites the policy based on the external event status; if no change is needed, returns false
 def update_app_state(event_status, policy, app_id, app_name):
-    apic = os.environ.get('APIC_SERVER')
-
     if event_status == True:
         if get_app_state(policy, app_id, app_name) != "Business-Relevant":
             i = 0
@@ -93,7 +89,9 @@ def update_app_state(event_status, policy, app_id, app_name):
                             a += 1
                             continue
                 i += 1
-        return policy
+            return policy
+        else:
+            return False
     else:
         if get_app_state(policy, app_id, app_name) != "Business-Irrelevant":
             i = 0
@@ -117,12 +115,13 @@ def update_app_state(event_status, policy, app_id, app_name):
                             a += 1
                             continue
                 i += 1
-        return policy
+            return policy
+        else:
+            return False
 
+# Send the new policy to the APIC EM API
 def put_policy_update(service_ticket, policy, policy_scope):
-    if policy != get_policy(service_ticket, policy_scope):
-        apic = os.environ.get("APIC_SERVER")
-
+    if policy != False:
         reqUrl = "https://{0}/api/v1/policy".format(apic)
         header = {"X-Auth-Token": service_ticket, "Content-type":"application/json"}
 
@@ -139,9 +138,8 @@ def put_policy_update(service_ticket, policy, policy_scope):
     else:
         return "No changes made to policy"
 
+# Get the details of the taskId created by APIC EM when sending policy changes
 def get_task(service_ticket, task_id):
-    apic = os.environ.get("APIC_SERVER")
-
     reqUrl = "https://{0}/api/v1/task/{1}".format(apic, task_id)
     header = {"X-Auth-Token": service_ticket, "Content-type": "application/json"}
 
