@@ -150,6 +150,38 @@ def get_task(service_ticket, task_id):
     else:
         r.raise_for_status()
 
+# Get list of policy scopes (to return to UI)
+def get_policy_scope(service_ticket):
+    reqUrl = "https://{0}/api/v1/policy/tag".format(apic)
+    header = {"X-Auth-Token": service_ticket}
+
+    r = requests.get(reqUrl, headers=header)
+
+    if r.status_code == 200:
+        list = []
+        for scope in r.json()['response']:
+            list.append(scope['policyTag'])
+        list.sort(key=lambda y: y.lower())
+        return list
+    else:
+        r.raise_for_status()
+
+# Get list of applications (to return to UI)
+def get_applications(service_ticket):
+    reqUrl = "https://{0}/api/v1/application".format(apic)
+    header = {"X-Auth-Token": service_ticket}
+
+    r = requests.get(reqUrl, headers=header)
+
+    if r.status_code == 200:
+        list = []
+        for app in r.json()['response']:
+            list.append(app['name'])
+        list.sort(key=lambda y: y.lower())
+        return list
+    else:
+        r.raise_for_status()
+
 '''
 #Code test block
 policy_scope = "ed-qos"
