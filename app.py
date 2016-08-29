@@ -22,13 +22,15 @@ event_status = False
 @app.route('/')
 def hello_world():
     # call the apic.py module to get some details on what is currently in play
-    app_list = apic.get_applications(apic.get_ticket())
+    # app_list = apic.get_applications(apic.get_ticket())
+    app_list = ['Netflix', 'Twitter', 'Facebook', 'Lync']  #temp to speed debugging
     return render_template('index.html', apps=app_list, state=event_status)
 
 
 @app.route('/configure/')
 def configure():
-    app_list = apic.get_applications(apic.get_ticket())
+    #app_list = apic.get_applications(apic.get_ticket())
+    app_list = ['Netflix', 'Twitter', 'Facebook', 'Lync']  #temp to speed debugging
     return render_template('configure.html', apps=app_list)
 
 
