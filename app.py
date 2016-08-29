@@ -67,7 +67,7 @@ def event_off():
 
 @app.route('/event/toggle/')
 def event_toggle():
-    if (event_statusis False):
+    if (event_status is False):
         return redirect(url_for('event_on'))
     else:
         return redirect(url_for('event_off'))
