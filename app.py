@@ -16,28 +16,19 @@ import weather
 
 
 app = Flask(__name__)
-event_status = False  # yes, it's a global. i'm a terrible person.
+event_status = True  # yes, it's a global. i'm a terrible person.
 
 
 @app.route('/')
 def hello_world():
     # call the apic.py module to get some details on what is currently in play
     app_list = ['Facebook', 'Netflix']
-    return render_template('index.html', apps=app_list)
+    return render_template('index.html', apps=app_list, state=event_status)
 
 
 @app.errorhandler(404)
 def not_found(error):
     return render_template('error.html'), 404
-
-
-@app.route('/status/')
-def get_status():
-    if (event_status is False):
-        answer_string = "All is clear!"
-    else:
-        answer_string = "Currently in emergency state"
-    return answer_string
 
 
 @app.route('/event/on/')
