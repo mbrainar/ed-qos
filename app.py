@@ -1,31 +1,39 @@
+#!/usr/bin/python
+'''
+    This application is a simple demonstration of using APIC-EM
+    dynamic QoS to modify QoS policies based on external factors
+    such as weather events, power excursions, etc.
+'''
+
+__author__ = 'sluzynsk'
+
 from flask import Flask
 from flask import render_template
+from flask import redirect
+from flask import url_for
 import apic
 import weather
 
+
 app = Flask(__name__)
-event_status = False
+event_status = False  # yes, it's a global. i'm a terrible person.
 
 
 @app.route('/')
 def hello_world():
     # call the apic.py module to get some details on what is currently in play
+    app_list = ['Facebook', 'Netflix']
+    return render_template('index.html', apps=app_list)
 
-    return render_template('index.html')
-
-@app.route('/apic-test/')
-def check_ticket():
-    ticket = apic.get_ticket()
-    answer_string = "ticket:" + ticket + " appId: " + apic.get_appid(ticket)
-    return answer_string
 
 @app.errorhandler(404)
 def not_found(error):
     return render_template('error.html'), 404
 
+
 @app.route('/status/')
 def get_status():
-    if (event_status == False):
+    if (event_status is False):
         answer_string = "All is clear!"
     else:
         answer_string = "Currently in emergency state"
@@ -38,7 +46,12 @@ def event_on():
     policy_scope = "ed-qos"
     app_name = "facebook"
     service_ticket = apic.get_ticket()
-    return apic.put_policy_update(service_ticket,apic.update_app_state(event_status,apic.get_policy(service_ticket,policy_scope),apic.get_app_id(service_ticket,app_name),app_name),policy_scope)
+    return apic.put_policy_update(service_ticket,
+                                  apic.update_app_state(event_status,
+                                                        apic.get_policy(service_ticket, policy_scope),
+                                                        apic.get_app_id(service_ticket, app_name),
+                                                        app_name),
+                                  policy_scope)
 
 
 @app.route('/event/off/')
@@ -47,14 +60,21 @@ def event_off():
     policy_scope = "ed-qos"
     app_name = "facebook"
     service_ticket = apic.get_ticket()
-    return apic.put_policy_update(service_ticket,apic.update_app_state(event_status,apic.get_policy(service_ticket,policy_scope),apic.get_app_id(service_ticket,app_name),app_name),policy_scope)
+    return apic.put_policy_update(service_ticket,
+                                  apic.update_app_state(event_status,
+                                                        apic.get_policy(service_ticket, policy_scope),
+                                                        apic.get_app_id(service_ticket, app_name),
+                                                        app_name),
+                                  policy_scope)
+
 
 @app.route('/event/toggle/')
 def event_toggle():
-    if (event_status == False):
-        return redirect(url_for('/event/on/'))
+    if (event_status is False):
+        return redirect(url_for('event_on'))
     else:
-        return redirect(url_for('/event/off/'))
+        return redirect(url_for('event_off'))
+
 
 @app.route('/weather/')
 def check_weather():
