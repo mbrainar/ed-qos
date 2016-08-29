@@ -16,14 +16,20 @@ import weather
 
 
 app = Flask(__name__)
-event_status = True  # yes, it's a global. i'm a terrible person.
+event_status = False
 
 
 @app.route('/')
 def hello_world():
     # call the apic.py module to get some details on what is currently in play
-    app_list = ['Facebook', 'Netflix']
+    app_list = apic.get_applications(apic.get_ticket())
     return render_template('index.html', apps=app_list, state=event_status)
+
+
+@app.route('/configure/')
+def configure():
+    app_list = apic.get_applications(apic.get_ticket())
+    return render_template('configure.html', apps=app_list)
 
 
 @app.errorhandler(404)
@@ -61,7 +67,7 @@ def event_off():
 
 @app.route('/event/toggle/')
 def event_toggle():
-    if (event_status is False):
+    if (event_statusis False):
         return redirect(url_for('event_on'))
     else:
         return redirect(url_for('event_off'))
