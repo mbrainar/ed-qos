@@ -29,8 +29,8 @@ def hello_world():
 
 @app.route('/configure/')
 def configure():
-    #app_list = apic.get_applications(apic.get_ticket())
-    app_list = ['Netflix', 'Twitter', 'Facebook', 'Lync']  #temp to speed debugging
+    app_list = apic.get_applications(apic.get_ticket())
+    # app_list = ['Netflix', 'Twitter', 'Facebook', 'Lync']  #temp to speed debugging
     return render_template('configure.html', apps=app_list)
 
 
