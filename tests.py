@@ -8,9 +8,6 @@ class FlaskTestCase(unittest.TestCase):
         app.app.config['TESTING'] = True
         self.app = app.app.test_client()
 
-    def test_correct_http_response(self):
-        resp = self.app.get('/')
-        self.assertEquals(resp.status_code, 200)
 
     def tearDown(self):
         pass
