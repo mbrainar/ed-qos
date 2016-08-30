@@ -11,6 +11,8 @@ from flask import Flask
 from flask import render_template
 from flask import redirect
 from flask import url_for
+from flask import jsonify
+from flask import request
 import apic
 import weather
 
@@ -19,25 +21,19 @@ app = Flask(__name__)
 event_status = False
 
 
-@app.route('/', methods = ['GET', 'POST'])
-def hello_world():
-    if request.method == 'GET':
-        # call the apic.py module to get some details on what is currently in play
-        policies = apic.get_policy_scope(apic.get_ticket())
+@app.route('/')
+def home():
+    policies = apic.get_policy_scope(apic.get_ticket())
+    return render_template('index.html', policies=policies, state=event_status,
+                               title='Event Driven QoS')
 
-        return render_template('index.html', policies=policies, state=event_status,
-                               title='Event Driven QoS', phase="select-policy")
-    else:
-        selected_policy = request.form['policy-select']
-        policy = apic.get_policy(apic.get_ticket(), selected_policy)
 
-        for item in policy['response']:
-            if {'appName': app_name, 'id': app_id} in item['resource']['applications']:
-                applist += item['actionProperty']['relevanceLevel']
-            else:
-                continue
-        return render_template('index.html', phase="list-apps",
-                               title='Event Driven QoS', selected_policy=selected_policy)
+@app.route('/_get_apps')
+def get_apps():
+    policy = request.args.get('policy')
+    app_list = apic.get_applications(apic.get_ticket(),policy)
+    return jsonify(app_list)
+
 
 
 @app.route('/configure/')

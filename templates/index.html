@@ -2,22 +2,37 @@
 
 {% block content %}
 <p>Choose a policy scope:</p>
-<select class="chosen-select policy-select" style="width:350px;">
+<select class="chosen-select policy-select" style="width:350px;" id="policy-select">
   <option value=""></option>
   {% for item in policies %}
   <option value={{item}}>{{item}}</option>
   {% endfor %}
 </select>
+<p></p>
+<span id="apps" hidden>
+<p>These applications are business-irrelevant in the selected policy:</p>
+<div style="overflow: scroll; width:350px; height:200px;">
+<ul id="results">
+</ul>
+</div>
 
+<p>Click <a href='/event/toggle'>here</a> to toggle the state of the configured applications</p>
+<p>Click <a href='/configure/'>here</a> to configure applications and policy tags.</p>
 
-  <p>Click <a href='/event/toggle'>here</a> to toggle the state of the configured applications</p>
-  <p>Click <a href='/configure/'>here</a> to configure applications and policy tags.</p>
-
+</span>
 <script type="text/javascript">
-$(function(){
-  $("#policy-select").on('change', function(evt, params) {
-
+  $(function() {
+    $('#policy-select').change(function() {
+      $.getJSON('/_get_apps', {
+        policy: ($(this).children('option:selected').val())
+      }, function(data){
+        $.each(data, function(key,val){
+          $("<li>"+val+"</li>").appendTo("#results");
+        })
+      });
+      $("#apps").fadeIn("fast");
+    });
   });
-});
 </script>
+
 {% endblock %}
