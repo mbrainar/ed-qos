@@ -19,19 +19,33 @@ app = Flask(__name__)
 event_status = False
 
 
-@app.route('/')
+@app.route('/', methods = ['GET', 'POST'])
 def hello_world():
-    # call the apic.py module to get some details on what is currently in play
-    # app_list = apic.get_applications(apic.get_ticket())
-    app_list = ['Netflix', 'Twitter', 'Facebook', 'Lync']  #temp to speed debugging
-    return render_template('index.html', apps=app_list, state=event_status)
+    if request.method == 'GET':
+        # call the apic.py module to get some details on what is currently in play
+        policies = apic.get_policy_scope(apic.get_ticket())
+
+        return render_template('index.html', policies=policies, state=event_status,
+                               title='Event Driven QoS', phase="select-policy")
+    else:
+        selected_policy = request.form['policy-select']
+        policy = apic.get_policy(apic.get_ticket(), selected_policy)
+
+        for item in policy['response']:
+            if {'appName': app_name, 'id': app_id} in item['resource']['applications']:
+                applist += item['actionProperty']['relevanceLevel']
+            else:
+                continue
+        return render_template('index.html', phase="list-apps",
+                               title='Event Driven QoS', selected_policy=selected_policy)
 
 
 @app.route('/configure/')
 def configure():
     app_list = apic.get_applications(apic.get_ticket())
     # app_list = ['Netflix', 'Twitter', 'Facebook', 'Lync']  #temp to speed debugging
-    return render_template('configure.html', apps=app_list)
+    return render_template('configure.html', apps=app_list,
+                           title='Event Driven QoS Configuration')
 
 
 @app.errorhandler(404)

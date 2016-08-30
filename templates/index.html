@@ -1,22 +1,23 @@
-<!doctype html>
-<head>
-<title>Event Driven QoS Demo</title>
-<body>
-  <h1>Event Driven QoS</h1>
-  <p>Currently the following apps are
-    {% if state == false %}
-      business irrelevant.
-    {% else %}
-      promoted to business relevant due to an external event.
-    {% endif %}
-  </p>
-  <ul id="apps">
-    {% for item in apps %}
-    <li>{{item}}</li>
-    {% endfor %}
-  </ul>
-  <p>Policy is currently being applied to the APIC-EM via policy tag "ed-qos"</p>
+{% extends 'layout.html' %}
+
+{% block content %}
+<p>Choose a policy scope:</p>
+<select class="chosen-select policy-select" style="width:350px;">
+  <option value=""></option>
+  {% for item in policies %}
+  <option value={{item}}>{{item}}</option>
+  {% endfor %}
+</select>
+
+
   <p>Click <a href='/event/toggle'>here</a> to toggle the state of the configured applications</p>
   <p>Click <a href='/configure/'>here</a> to configure applications and policy tags.</p>
-</body>
-</html>
+
+<script type="text/javascript">
+$(function(){
+  $("#policy-select").on('change', function(evt, params) {
+
+  });
+});
+</script>
+{% endblock %}

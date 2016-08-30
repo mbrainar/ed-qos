@@ -1,44 +1,11 @@
-<!doctype html>
-<html lang="en"
-<head>
-  <meta charset="utf-8">
-  <title>Event Driven QoS Demo</title>
-  <link rel="stylesheet" href="/static/chosen.css">
-<body>
-  <h1>Event Driven QoS</h1>
-  <form>
-    <div id="container">
-      <div id="content">
-        <header>
-          <h1>Available applications:</h1>
-        </header
-<div class="side-by-side clearfix">
+{% extends 'layout.html' %}
+{% block content %}
+<form>
   <select data-placeholder="Choose an application" class="chosen-select" multiple style="width:350px;">
     <option value=""></option>
     {% for item in apps %}
     <option value={{item}}>{{item}}</option>
     {% endfor %}
   </select>
-</div>
-</div>
-</div>
-<script src="/static/jquery-3.1.0.min.js" type="text/javascript"></script>
-<script src="/static/chosen.jquery.min.js" type="text/javascript"></script>
-<script type="text/javascript">
-var config = {
-  '.chosen-select'           : {},
-  '.chosen-select-deselect'  : {allow_single_deselect:true},
-  '.chosen-select-no-single' : {disable_search_threshold:10},
-  '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
-  '.chosen-select-width'     : {width:"95%"}
-}
-for (var selector in config) {
-  $(selector).chosen(config[selector]);
-}
-$(".chosen-select").chosen({max_selected_options: 5});
-</script>
 </form>
-
-
-</body>
-</html>
+{% endblock %}
