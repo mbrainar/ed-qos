@@ -13,28 +13,89 @@ from flask import redirect
 from flask import url_for
 from flask import jsonify
 from flask import request
+from flask import g
 import apic
 import weather
+import sqlite3
+import os
+
 
 
 app = Flask(__name__)
-event_status = False
+app.config.from_object(__name__)
+
+app.config.update(dict(
+    DATABASE=os.path.join(app.root_path, 'edqos.db'),
+    SECRET_KEY='devel key'
+))
+
+if os.environ.get("SECRET_KEY"):
+    app.config.update(dict(
+        SECRET_KEY=os.environ.get("SECRET_KEY")
+    ))
+
+def dict_factory(cursor, row):
+    d = {}
+    for idx,col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
+
+def connect_db():
+    rv = sqlite3.connect(app.config['DATABASE'])
+    rv.row_factory = dict_factory
+    return rv
+
+
+def get_db():
+    if not hasattr(g, 'sqlite_db'):
+        g.sqlite_db = connect_db()
+    return g.sqlite_db
+
+
+def init_db():
+    db = get_db()
+    with app.open_resource('schema.sql', mode='r') as f:
+        db.cursor().executescript(f.read())
+    db.commit()
+
+
+@app.cli.command('initdb')
+def initdb_command():
+    init_db()
+    print 'Database initialized'
+
+
+@app.teardown_appcontext
+def close_db(error):
+    if hasattr(g, 'sqlite_db'):
+        g.sqlite_db.close()
 
 
 @app.route('/')
 def home():
     policies = apic.get_policy_scope(apic.get_ticket())
-    return render_template('index.html', policies=policies, state=event_status,
+    return render_template('index.html', policies=policies,
                                title='Event Driven QoS')
 
 
 @app.route('/_get_apps')
 def get_apps():
+    pol = request.args.get('policy')
+    db = get_db()
+    cur = db.execute('select id, policy, app from edqos where policy = ?', tuple([pol]))
+    entries = cur.fetchall()
+    return jsonify(map(dict, entries))
+
+@app.route('/_is_relevant')
+def check_relevant():
+    app = request.args.get('app')
     policy = request.args.get('policy')
-    app_list = apic.get_applications(apic.get_ticket(),policy)
-    return jsonify(app_list)
-
-
+    print("app is {0} policy is {1}".format(app, policy))
+    ticket = apic.get_ticket()
+    print("ticket is {0}".format(ticket))
+    app_id = apic.get_app_id(ticket, app)
+    print("app_id is {0}".format(app_id))
+    return apic.get_app_state(policy, app_id, app)
 
 @app.route('/configure/')
 def configure():
@@ -46,14 +107,13 @@ def configure():
 
 @app.errorhandler(404)
 def not_found(error):
-    return render_template('error.html'), 404
+    return render_template('error.html', title='Oops.'), 404
 
 
 @app.route('/event/on/')
 def event_on():
-    event_status = True
-    policy_scope = "ed-qos"
-    app_name = "facebook"
+    policy_scope = request.args.get('policy')
+    app_name = request.args.get('app')
     service_ticket = apic.get_ticket()
     return apic.put_policy_update(service_ticket,
                                   apic.update_app_state(event_status,
@@ -65,9 +125,8 @@ def event_on():
 
 @app.route('/event/off/')
 def event_off():
-    event_status = False
-    policy_scope = "ed-qos"
-    app_name = "facebook"
+    policy_scope = request.args.get('policy')
+    app_name = request.args.get('app')
     service_ticket = apic.get_ticket()
     return apic.put_policy_update(service_ticket,
                                   apic.update_app_state(event_status,
@@ -76,13 +135,6 @@ def event_off():
                                                         app_name),
                                   policy_scope)
 
-
-@app.route('/event/toggle/')
-def event_toggle():
-    if (event_status is False):
-        return redirect(url_for('event_on'))
-    else:
-        return redirect(url_for('event_off'))
 
 
 @app.route('/weather/')

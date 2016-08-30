@@ -10,29 +10,48 @@
 </select>
 <p></p>
 <span id="apps" hidden>
-<p>These applications are business-irrelevant in the selected policy:</p>
+<p>These applications are part of the selected policy:</p>
 <div style="overflow: scroll; width:350px; height:200px;">
 <ul id="results">
 </ul>
 </div>
 
-<p>Click <a href='/event/toggle'>here</a> to toggle the state of the configured applications</p>
+<p>Click <a href='/event/on'>here</a> to set the chosen apps to relevant.</p>
+<p>Click <a href='/event/off'>here</a> to set the chosen apps to irrelevant.</p>
 <p>Click <a href='/configure/'>here</a> to configure applications and policy tags.</p>
 
 </span>
 <script type="text/javascript">
   $(function() {
     $('#policy-select').change(function() {
-      $.getJSON('/_get_apps', {
-        policy: ($(this).children('option:selected').val())
-      }, function(data){
-        $.each(data, function(key,val){
-          $("<li>"+val+"</li>").appendTo("#results");
-        })
-      });
+      $("#results").empty();
+      var pol = ($(this).children('option:selected').val());
+      console.log("pol = "+pol);
+      $.ajax({
+        dataType: "json",
+        url: '/_get_apps',
+        data: { policy: pol },
+        success: function(data){
+          console.log(data);
+          $.each(data, function(i) {
+            console.log(this);
+            $("<li>"+this.app+ "-"+getState(pol,this.app)+"</li>").appendTo("#results");
+          })
+      }});
+
       $("#apps").fadeIn("fast");
     });
   });
+
+  function getState(pol, test_app) {
+    var retval;
+    console.log("pol is " + pol + " app is " + test_app);
+    $.get("/_is_relevant", { app: test_app, policy: pol }, function(data){
+      console.log(data);
+      retval = data;
+    })
+    return retval;
+  }
 </script>
 
 {% endblock %}
