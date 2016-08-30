@@ -167,17 +167,22 @@ def get_policy_scope(service_ticket):
         r.raise_for_status()
 
 # Get list of applications (to return to UI)
-def get_applications(service_ticket):
-    reqUrl = "https://{0}/api/v1/application".format(apic)
+def get_applications(service_ticket, policy_scope):
+    reqUrl = "https://{0}/api/v1/policy?policyScope={1}".format(apic, policy_scope)
     header = {"X-Auth-Token": service_ticket}
 
     r = requests.get(reqUrl, headers=header)
 
     if r.status_code == 200:
         list = []
-        for app in r.json()['response']:
-            list.append(app['name'])
-        list.sort(key=lambda y: y.lower())
+        for policy in r.json()['response']:
+            if policy['actionProperty']['relevanceLevel'] == "Business-Irrelevant":
+                for app in policy['resource']['applications']:
+                    list.append(app['appName'])
+            else:
+                continue
+            list.sort(key=lambda y: y.lower())
+            break
         return list
     else:
         r.raise_for_status()
