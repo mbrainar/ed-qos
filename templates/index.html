@@ -1,6 +1,10 @@
 {% extends 'layout.html' %}
 
 {% block content %}
+
+<h2 id='loading_indicator'>Loading, please wait...</h2>
+
+
 <p>Choose a policy scope:</p>
 <select class="chosen-select policy-select" style="width:350px;" id="policy-select">
   <option value=""></option>
@@ -18,39 +22,46 @@
 
 <p>Click <a href='/event/on'>here</a> to set the chosen apps to relevant.</p>
 <p>Click <a href='/event/off'>here</a> to set the chosen apps to irrelevant.</p>
-<p>Click <a href='/configure/'>here</a> to configure applications and policy tags.</p>
+<p>Click <a href="#" id='config'>here</a> to configure applications and policy tags.</p>
 
 </span>
 <script type="text/javascript">
-  $(function() {
+  $(document).ready(function() {
+    $('#loading_indicator').hide();
     $('#policy-select').change(function() {
       $("#results").empty();
       var pol = ($(this).children('option:selected').val());
-      console.log("pol = "+pol);
       $.ajax({
         dataType: "json",
-        url: '/_get_apps',
+        url: '/_get_apps/',
         data: { policy: pol },
         success: function(data){
-          console.log(data);
           $.each(data, function(i) {
-            console.log(this);
-            $("<li>"+this.app+ "-"+getState(pol,this.app)+"</li>").appendTo("#results");
+            getState(pol,this.app, i);
+            $("<li id="+i+">"+this.app+ "</li>").appendTo("#results");
           })
       }});
 
       $("#apps").fadeIn("fast");
     });
+    document.getElementById('config').onclick = function() {
+      var pol = ($('#policy-select').children('option:selected').val());
+      window.location.href = "/configure?policy=" + pol;
+    }
   });
 
-  function getState(pol, test_app) {
-    var retval;
-    console.log("pol is " + pol + " app is " + test_app);
-    $.get("/_is_relevant", { app: test_app, policy: pol }, function(data){
-      console.log(data);
-      retval = data;
+  $("#loading_indicator")
+    .ajaxStart(function(){
+      $(this).show();
     })
-    return retval;
+    .ajaxStop(function(){
+      $(this).hide();
+    });
+
+  function getState(pol, test_app, index) {
+    $.get("/_is_relevant/", { app: test_app, policy: pol }, function(data){
+      document.getElementById(index).innerHTML=test_app + " - " + data;
+    })
   }
 </script>
 

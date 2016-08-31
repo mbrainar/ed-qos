@@ -78,7 +78,7 @@ def home():
                                title='Event Driven QoS')
 
 
-@app.route('/_get_apps')
+@app.route('/_get_apps/')
 def get_apps():
     pol = request.args.get('policy')
     db = get_db()
@@ -86,23 +86,34 @@ def get_apps():
     entries = cur.fetchall()
     return jsonify(map(dict, entries))
 
-@app.route('/_is_relevant')
+@app.route('/_is_relevant/')
 def check_relevant():
     app = request.args.get('app')
-    policy = request.args.get('policy')
-    print("app is {0} policy is {1}".format(app, policy))
+    policy_tag = request.args.get('policy')
     ticket = apic.get_ticket()
-    print("ticket is {0}".format(ticket))
     app_id = apic.get_app_id(ticket, app)
-    print("app_id is {0}".format(app_id))
+    policy = apic.get_policy(ticket, policy_tag)
     return apic.get_app_state(policy, app_id, app)
 
 @app.route('/configure/')
 def configure():
-    app_list = apic.get_applications(apic.get_ticket())
-    # app_list = ['Netflix', 'Twitter', 'Facebook', 'Lync']  #temp to speed debugging
-    return render_template('configure.html', apps=app_list,
+    policy = request.args.get('policy')
+    app_list = apic.get_applications(apic.get_ticket(),policy)
+    return render_template('configure.html', apps=app_list, policy=policy,
                            title='Event Driven QoS Configuration')
+
+@app.route('/_save_config/', methods=["POST"])
+def save_config():
+    applist = request.form.getlist('selections')
+    policy_tag = request.form.getlist('policy_tag')[0]
+    print(policy_tag)
+    apps = applist[0].split(",")
+    db = get_db()
+    for item in apps:
+        cur = db.execute('insert into edqos (policy, app) values (?,?)',
+            [policy_tag, item])
+    db.commit()
+    return jsonify(applist)
 
 
 @app.errorhandler(404)
