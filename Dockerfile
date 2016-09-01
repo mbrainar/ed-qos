@@ -12,4 +12,4 @@ WORKDIR /app
 RUN pip install --requirement /app/requirements.txt
 ENV FLASK_APP=app.py
 CMD ["flask", "initdb"]
-CMD ["flask", "run"]
+CMD ["python", "app.py"]
