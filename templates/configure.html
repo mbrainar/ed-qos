@@ -15,12 +15,11 @@
 <input id="return" type="button" value="Save" onclick="return save_and_return()" />
 
 <script type="text/javascript">
-  $(document).ready(function() {
-    $('#app-select').change(function() {
-      var choices = ($(this).children('option:selected').val());
-    });
-  });
-
+$(document).ready(function() {
+  {% for item in selected_apps %}
+    $('#app-select > option[value={{item}}]').attr("selected","selected");
+  {% endfor %}
+})
   function save_and_return() {
     var selected = [];
     $('#app-select > option:selected').each(function(){
@@ -36,13 +35,10 @@
         selections: selected.toString()},
       success: function(data){
         console.log(data);
-      <!--window.location.href="/";-->
+        window.location.href="/";
       },
       failure: function(data) {
         alert("Sorry man, no workie!");
-      },
-      always: function(data){
-        alert("Saved.");
       }
   })
 

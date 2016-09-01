@@ -99,16 +99,23 @@ def check_relevant():
 def configure():
     policy = request.args.get('policy')
     app_list = apic.get_applications(apic.get_ticket(),policy)
+    db = get_db()
+    cur = db.execute('select id, policy, app from edqos where policy = ?', tuple([policy]))
+    entries = cur.fetchall()
+    selected_apps = []
+    for item in entries:
+        selected_apps.append(item['app'])
     return render_template('configure.html', apps=app_list, policy=policy,
+                           selected_apps=selected_apps,
                            title='Event Driven QoS Configuration')
 
 @app.route('/_save_config/', methods=["POST"])
 def save_config():
     applist = request.form.getlist('selections')
     policy_tag = request.form.getlist('policy_tag')[0]
-    print(policy_tag)
     apps = applist[0].split(",")
     db = get_db()
+    cur = db.execute('delete from edqos')
     for item in apps:
         cur = db.execute('insert into edqos (policy, app) values (?,?)',
             [policy_tag, item])
