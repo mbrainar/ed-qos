@@ -3,6 +3,7 @@
 ##
 FROM python:2-alpine
 MAINTAINER Steven Luzynski <sluzynsk@cisco.com>
+EXPOSE 5000
 
 RUN pip install --no-cache-dir setuptools wheel
 
