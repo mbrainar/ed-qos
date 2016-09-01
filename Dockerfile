@@ -10,6 +10,5 @@ RUN pip install --no-cache-dir setuptools wheel
 ADD . /app
 WORKDIR /app
 RUN pip install --requirement /app/requirements.txt
-ENV FLASK_APP=app.py
-CMD ["flask", "initdb"]
+RUN FLASK_APP=app.py flask initdb
 CMD ["python", "app.py"]
