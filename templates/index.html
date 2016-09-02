@@ -1,0 +1,75 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+<h2 id='loading_indicator'>Loading, please wait...</h2>
+
+
+<p>Choose a policy scope:</p>
+<select class="chosen-select policy-select" style="width:350px;" id="policy-select">
+  <option value=""></option>
+  {% for item in policies %}
+  <option value={{item}}>{{item}}</option>
+  {% endfor %}
+</select>
+<p></p>
+<span id="apps" hidden>
+<p>These applications are part of the selected policy:</p>
+<div style="overflow: scroll; width:350px; height:200px;">
+<ul id="results">
+</ul>
+</div>
+
+<p>Click <a href='/event/on'>here</a> to set the chosen apps to relevant.</p>
+<p>Click <a href='/event/off'>here</a> to set the chosen apps to irrelevant.</p>
+<p>Click <a href="#" id='config'>here</a> to configure applications and policy tags.</p>
+
+</span>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('#loading_indicator').hide();
+    if ("{{policy_tag}}") {
+      $('#policy-select > option[value="{{policy_tag}}"]').attr("selected","selected");
+      refreshBox();
+    }
+    $('#policy-select').change(function() {
+      refreshBox();
+    });
+    document.getElementById('config').onclick = function() {
+      var pol = ($('#policy-select').children('option:selected').val());
+      window.location.href = "/configure?policy=" + pol;
+    }
+  });
+
+  $("#loading_indicator")
+    .ajaxStart(function(){
+      $(this).show();
+    })
+    .ajaxStop(function(){
+      $(this).hide();
+    });
+
+  function refreshBox() {
+    $("#results").empty();
+    var pol = ($('#policy-select').children('option:selected').val());
+    $.ajax({
+      dataType: "json",
+      url: '/_get_apps/',
+      data: { policy: pol },
+      success: function(data){
+        $.each(data, function(i) {
+          getState(pol,this.app, i);
+          $("<li id="+i+">"+this.app+ "</li>").appendTo("#results");
+        })
+    }});
+
+    $("#apps").fadeIn("slow");
+  }
+  function getState(pol, test_app, index) {
+    $.get("/_is_relevant/", { app: test_app, policy: pol }, function(data){
+      document.getElementById(index).innerHTML=test_app + " - " + data;
+    })
+  }
+</script>
+
+{% endblock %}

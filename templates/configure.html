@@ -1,0 +1,49 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<form>
+    <select data-placeholder="Choose applications" class="chosen-select app-select" id="app-select" multiple style="width:350px;">
+      <option value=""></option>
+      {% for item in apps %}
+      <option value={{item}}>{{item}}</option>
+      {% endfor %}
+    </select>
+</form>
+
+<p>The selected applications will be configured with policy tag {{policy}}.</p>
+
+<input id="return" type="button" value="Save" onclick="return save_and_return()" />
+
+<script type="text/javascript">
+$(document).ready(function() {
+  {% for item in selected_apps %}
+    $('#app-select > option[value={{item}}]').attr("selected","selected");
+  {% endfor %}
+})
+  function save_and_return() {
+    var selected = [];
+    $('#app-select > option:selected').each(function(){
+      selected.push(this.value);
+    });
+    console.log(selected);
+    $.ajax({
+      type: "POST",
+      async: false,
+      traditional: true,
+      url: '/_save_config/',
+      data: { policy_tag: '{{policy}}',
+        selections: selected.toString()},
+      success: function(data){
+        console.log(data);
+        window.location.href=encodeURI("/?selected={{policy}}");
+      },
+      failure: function(data) {
+        alert("Sorry man, no workie!");
+      }
+  })
+
+  }
+
+</script>
+
+{% endblock %}

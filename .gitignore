@@ -93,3 +93,10 @@ ENV/
 
 # don't commit secrets!
 drone_secrets.yml
+
+# MacOS foolishness
+.DS_Store
+
+# don't store databases
+edqos.db
+
