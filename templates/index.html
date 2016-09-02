@@ -28,21 +28,12 @@
 <script type="text/javascript">
   $(document).ready(function() {
     $('#loading_indicator').hide();
+    if ("{{policy_tag}}") {
+      $('#policy-select > option[value="{{policy_tag}}"]').attr("selected","selected");
+      refreshBox();
+    }
     $('#policy-select').change(function() {
-      $("#results").empty();
-      var pol = ($(this).children('option:selected').val());
-      $.ajax({
-        dataType: "json",
-        url: '/_get_apps/',
-        data: { policy: pol },
-        success: function(data){
-          $.each(data, function(i) {
-            getState(pol,this.app, i);
-            $("<li id="+i+">"+this.app+ "</li>").appendTo("#results");
-          })
-      }});
-
-      $("#apps").fadeIn("fast");
+      refreshBox();
     });
     document.getElementById('config').onclick = function() {
       var pol = ($('#policy-select').children('option:selected').val());
@@ -58,6 +49,22 @@
       $(this).hide();
     });
 
+  function refreshBox() {
+    $("#results").empty();
+    var pol = ($('#policy-select').children('option:selected').val());
+    $.ajax({
+      dataType: "json",
+      url: '/_get_apps/',
+      data: { policy: pol },
+      success: function(data){
+        $.each(data, function(i) {
+          getState(pol,this.app, i);
+          $("<li id="+i+">"+this.app+ "</li>").appendTo("#results");
+        })
+    }});
+
+    $("#apps").fadeIn("slow");
+  }
   function getState(pol, test_app, index) {
     $.get("/_is_relevant/", { app: test_app, policy: pol }, function(data){
       document.getElementById(index).innerHTML=test_app + " - " + data;

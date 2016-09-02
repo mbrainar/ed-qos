@@ -73,8 +73,9 @@ def close_db(error):
 
 @app.route('/')
 def home():
+    policy_tag = request.args.get('selected')
     policies = apic.get_policy_scope(apic.get_ticket())
-    return render_template('index.html', policies=policies,
+    return render_template('index.html', policies=policies, policy_tag=policy_tag,
                                title='Event Driven QoS')
 
 
