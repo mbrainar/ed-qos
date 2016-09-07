@@ -68,79 +68,64 @@ def get_app_state(policy, app_id, app_name):
 def update_app_state(service_ticket, event_status, policy, app_list):
     if event_status == True:
         print "Event trigger ON"
-        #print app_list
         for app_name in app_list:
+            i = 0
             app_id = get_app_id(service_ticket, app_name)
-            print "Looping in app list, appName={0}, appId={1}".format(app_name, app_id)
+            print "Looping in app list, appName={0}".format(app_name)
             if get_app_state(policy, app_id, app_name) != "Business-Relevant":
-                i = 0
                 print "Only performing update if {0} is not already part of business-relevant".format(app_name)
                 #loop through each of the 3 policy entries
-                #print range(len(policy['response']))
                 for i in range(len(policy['response'])):
-                    #print "i = {0}".format(i)
                     a = 0
                     #if we are looking at the business-relevant policy, add app
                     if policy['response'][i]['actionProperty']['relevanceLevel'] == "Business-Relevant":
                         policy['response'][i]['resource']['applications'].append({"id": app_id, "appName": app_name})
                         print "Appended {0} to business-relevant".format(app_name)
-                        #i += 1
-                        #continue
                     #if we are looking at the business-irrelevant (or default) policy, remove app
                     else:
                         #loop through each of the applications
-                        #print i
-                        #print range(len(policy['response'][i]['resource']['applications']))
                         for a in range(len(policy['response'][i]['resource']['applications'])):
-                            #print "a = {0}".format(a)
                             #if app matches, delete from business-irrelevant, else continue looping applications
-                            #print i
-                            if policy['response'][i]['resource']['applications'][a]['id'] == app_id:
-                                policy['response'][i]['resource']['applications'].pop(a)
+                            try:
+                                policy['response'][i]['resource']['applications'].remove({'id': app_id, 'appName': app_name})
                                 print "Removed {0} from business-irrelevant".format(app_name)
-                            #else:
-                                #a += 1
-                                #continue
-                    #i += 1
-                return policy
+                            except:
+                                continue
             else:
-                return False
+                continue
+        return policy
     else:
         print "Event trigger is OFF"
         for app_name in app_list:
+            i = 0
             app_id = get_app_id(service_ticket, app_name)
-            print "looping in app list, appName={0}, appId={1}".format(app_name, app_id)
+            print "looping in app list, appName={0}".format(app_name)
             if get_app_state(policy, app_id, app_name) != "Business-Irrelevant":
-                #i = 0
                 print "Only performing update if {0} is not already part of business-irrelevant".format(app_name)
                 #loop through each of the 3 policy entries
                 for i in range(len(policy['response'])):
-                    #a = 0
+                    a = 0
                     #if we are looking at the business-irrelevant policy, add app
                     if policy['response'][i]['actionProperty']['relevanceLevel'] == "Business-Irrelevant":
                         policy['response'][i]['resource']['applications'].append({"id": app_id, "appName": app_name})
                         print "Appended {0} to business-irrelevant".format(app_name)
-                        #i += 1
-                        #continue
                     #if we are looking at the business-relevant (or default) policy, remove app
                     else:
                         #loop through each of the applications
                         for a in range(len(policy['response'][i]['resource']['applications'])):
                             #if app matches, delete from business-relevant, else continue looping applications
-                            if policy['response'][i]['resource']['applications'][a]['id'] == app_id:
-                                policy['response'][i]['resource']['applications'].pop(a)
-                                print "Removed {0} from business-irrelevant".format(app_name)
-                            #else:
-                                #a += 1
-                                #continue
-                    #i += 1
-                return policy
+                            try:
+                                policy['response'][i]['resource']['applications'].remove({'id': app_id, 'appName': app_name})
+                                print "Removed {0} from business-relevant".format(app_name)
+                            except:
+                                continue
             else:
-                return False
+                continue
+        return policy
 
 # Send the new policy to the APIC EM API
 def put_policy_update(service_ticket, policy, policy_scope):
-    if policy != False:
+    if policy != get_policy(service_ticket, policy_scope):
         reqUrl = "https://{0}/api/v1/policy".format(apic)
         header = {"X-Auth-Token": service_ticket, "Content-type":"application/json"}
 
@@ -213,7 +198,7 @@ app_list = ["facebook","netflix","facetime"]
 service_ticket = get_ticket()
 
 #print get_app_state(get_policy(get_ticket(),policy_scope),get_app_id(get_ticket(),app_name),app_name)
-
+'''
 old = open("old.json", "w")
 new = open("new.json", "w")
 
@@ -222,6 +207,6 @@ new.write(json.dumps(update_app_state(service_ticket,True,get_policy(service_tic
 
 old.close()
 new.close()
-
-#print put_policy_update(get_ticket(),update_app_state(False,get_policy(get_ticket(),policy_scope),get_app_id(get_ticket(),app_name),app_name),policy_scope)
+'''
+print put_policy_update(service_ticket,update_app_state(service_ticket,False,get_policy(service_ticket,policy_scope),app_list),policy_scope)
 #'''
