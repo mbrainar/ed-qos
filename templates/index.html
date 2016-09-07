@@ -20,8 +20,8 @@
 </ul>
 </div>
 
-<p>Click <a href='/event/on'>here</a> to set the chosen apps to relevant.</p>
-<p>Click <a href='/event/off'>here</a> to set the chosen apps to irrelevant.</p>
+<p>Click <a href="#" id='event-on'>here</a> to set the chosen apps to relevant.</p>
+<p>Click <a href="#" id='event-off'>here</a> to set the chosen apps to irrelevant.</p>
 <p>Click <a href="#" id='config'>here</a> to configure applications and policy tags.</p>
 
 </span>
@@ -35,7 +35,15 @@
     $('#policy-select').change(function() {
       refreshBox();
     });
-    document.getElementById('config').onclick = function() {
+    document.getElementById('event-on').onclick = function() {
+      var pol = ($('#policy-select').children('option:selected').val());
+      window.location.href = "/event/on/?policy=" + pol;
+    }
+    document.getElementById('event-off').onclick = function() {
+      var pol = ($('#policy-select').children('option:selected').val());
+      window.location.href = "/event/off/?policy=" + pol;
+    }
+      document.getElementById('config').onclick = function() {
       var pol = ($('#policy-select').children('option:selected').val());
       window.location.href = "/configure?policy=" + pol;
     }
