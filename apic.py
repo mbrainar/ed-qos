@@ -191,14 +191,14 @@ def get_applications(service_ticket, policy_scope):
     else:
         r.raise_for_status()
 
-#'''
+'''
 #Code test block
 policy_scope = "ed-qos"
 app_list = ["facebook","netflix","facetime"]
 service_ticket = get_ticket()
 
 #print get_app_state(get_policy(get_ticket(),policy_scope),get_app_id(get_ticket(),app_name),app_name)
-'''
+
 old = open("old.json", "w")
 new = open("new.json", "w")
 
@@ -207,6 +207,6 @@ new.write(json.dumps(update_app_state(service_ticket,True,get_policy(service_tic
 
 old.close()
 new.close()
-'''
+
 print put_policy_update(service_ticket,update_app_state(service_ticket,False,get_policy(service_ticket,policy_scope),app_list),policy_scope)
-#'''
+'''
