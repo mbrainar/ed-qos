@@ -132,26 +132,40 @@ def not_found(error):
 @app.route('/event/on/')
 def event_on():
     policy_scope = request.args.get('policy')
-    app_name = request.args.get('app')
+    event_status = True
+    db = get_db()
+    cur = db.execute('select app from edqos where policy = ?', tuple([policy_scope]))
+    saved_apps = cur.fetchall()
+    app_list = []
+    for app in saved_apps:
+        app_list.append(app['app'])
+    #return str(app_list)
     service_ticket = apic.get_ticket()
     return apic.put_policy_update(service_ticket,
-                                  apic.update_app_state(event_status,
+                                  apic.update_app_state(service_ticket,
+                                                        event_status,
                                                         apic.get_policy(service_ticket, policy_scope),
-                                                        apic.get_app_id(service_ticket, app_name),
-                                                        app_name),
+                                                        app_list),
                                   policy_scope)
 
 
 @app.route('/event/off/')
 def event_off():
     policy_scope = request.args.get('policy')
-    app_name = request.args.get('app')
+    event_status = False
+    db = get_db()
+    cur = db.execute('select app from edqos where policy = ?', tuple([policy_scope]))
+    saved_apps = cur.fetchall()
+    app_list = []
+    for app in saved_apps:
+        app_list.append(app['app'])
+    # return str(app_list)
     service_ticket = apic.get_ticket()
     return apic.put_policy_update(service_ticket,
-                                  apic.update_app_state(event_status,
+                                  apic.update_app_state(service_ticket,
+                                                        event_status,
                                                         apic.get_policy(service_ticket, policy_scope),
-                                                        apic.get_app_id(service_ticket, app_name),
-                                                        app_name),
+                                                        app_list),
                                   policy_scope)
 
 
