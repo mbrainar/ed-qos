@@ -36,12 +36,10 @@
       refreshBox();
     });
     document.getElementById('event-on').onclick = function() {
-      var pol = ($('#policy-select').children('option:selected').val());
-      window.location.href = "/event/on/?policy=" + pol;
+      toggleOn();
     }
     document.getElementById('event-off').onclick = function() {
-      var pol = ($('#policy-select').children('option:selected').val());
-      window.location.href = "/event/off/?policy=" + pol;
+      toggleOff();
     }
       document.getElementById('config').onclick = function() {
       var pol = ($('#policy-select').children('option:selected').val());
@@ -73,6 +71,40 @@
 
     $("#apps").fadeIn("slow");
   }
+
+  function toggleOn() {
+    var pol = ($('#policy-select').children('option:selected').val());
+    var doingWork = new $.Deferred();
+    $.ajax({
+        dataType: "json",
+        url: '/event/on/',
+        data: { policy: pol },
+        success: doingWork.resolve(),
+        failure: doingWork.reject()
+    });
+
+    $.when(doingWork).done(function() {
+      refreshBox();
+    });
+  }
+
+  function toggleOff() {
+    var pol = ($('#policy-select').children('option:selected').val());
+    var doingWork = new $.Deferred();
+    $.ajax({
+      dataType: "json",
+      url: '/event/off/',
+      data: { policy: pol },
+      success: doingWork.resolve(),
+      failure: doingWork.reject()
+    });
+
+    $.when(doingWork).done(function() {
+      refreshBox();
+    });
+
+  }
+
   function getState(pol, test_app, index) {
     $.get("/_is_relevant/", { app: test_app, policy: pol }, function(data){
       document.getElementById(index).innerHTML=test_app + " - " + data;
