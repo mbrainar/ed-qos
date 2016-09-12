@@ -1,7 +1,5 @@
 # Event Driven QoS
 
-[![](https://images.microbadger.com/badges/version/sluzynsk/ed-qos.svg)](http://microbadger.com/images/sluzynsk/ed-qos "Get your own version badge on microbadger.com")
-
 # Description
 
 Event Driven QoS is a simple demo application illustrating programmatic control of APIC-EM to change
@@ -20,11 +18,14 @@ Prerequisites
 
 * Python 2.7+
 * [setuptools package](https://pypi.python.org/pypi/setuptools)
+* [Flask](http://flask.pocoo.org)
+* [Requests](http://docs.python-requests.org/en/master/)
+
+The front end application makes use of [JQuery](http://jquery.com) and [Chosen](https://harvesthq.github.io/chosen/);
+separate installation of these libraries is not required as they are linked from
+public CDN networks.
 
 ## Downloading
-
-Provide instructions for how to obtain the software from this repository, if there are multiple options - please include
-as many as possible
 
 Option A:
 
@@ -41,22 +42,32 @@ Option C:
 
 The latest build of this project is also available as a Docker image from Docker Hub
 
-    docker pull username/image:tag
+    docker pull imapex/ed-qos:latest
 
 ## Installing
 
-Provide instructions on how to install / use the application
+To install the application, edit the sample-demoapp.json file (included) to
+reflect credentials for your Cisco APIC-EM installation. Run the app_install.sh
+script to install the application to your [mantl](http://mantl.io) server.
 
 # Usage
 
-Provide any relevant code samples / CLI's to leverage the code
+The application provides a web interface for status reporting and configuration.
+That interface will be available after the application is deployed.
 
-    python app.py
-
+Currently, the only external event source implemented is a click on that web
+interface. The next release will support incoming events from event modules.
+Planned event modules include integration with weather and social media.
 
 # Development
 
-Provide any notes for other contributors.  This includes how to run tests / etc
+Development requires access to Cisco's DevNet sandbox APIC-EM server, or a suitable
+on-site installation. The application can be run locally rather than in a container
+environment by the following:
+
+    export FLASK_APP=app.py
+    flask initdb (on first launch to initialize a local database)
+    flask run
 
 
 ## Linting
@@ -67,8 +78,7 @@ We use flake 8 to lint our code. Please keep the repository clean by running:
 
 ## Testing
 
-The IMAPEX team should attempt to have unittests with  100% code coverage. An example test suite is contained
-within the tests.py file for the boilerplate application
+Currently test coverage is lacking for this application.
 
 The tests are can be run in the following ways::
 
