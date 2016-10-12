@@ -32,7 +32,7 @@ sed -i "" -e "s/DOCKERUSER/$docker_username/g" $docker_username-demoapp.json
 
 echo " "
 echo "***************************************************"
-echo "Installing the demoapp as  class/$docker_username"
+echo "Installing the demoapp as  imapex/ed-qos/$docker_username"
 curl -k -X POST -u $mantl_user:$mantl_password https://$control_address:8080/v2/apps \
 -H "Content-type: application/json" \
 -d @$docker_username-demoapp.json \
@@ -46,7 +46,7 @@ echo Installed
 echo "Wait 2-3 minutes for the service to deploy. "
 echo "Then you can visit your application at:  "
 echo
-echo "http://imapex-$docker_username.$mantl_domain/hello/world"
+echo "http://imapex-ed-qos-$docker_username.$mantl_domain/"
 echo
 echo
 echo "You can also watch the progress from the GUI at: "
