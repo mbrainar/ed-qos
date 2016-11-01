@@ -25,7 +25,7 @@ def get_ticket():
     reqUrl = "https://{0}/api/v1/ticket".format(apic)
     payload = {'username': username, 'password': password}
 
-    r = requests.post(reqUrl, json=payload)
+    r = requests.post(reqUrl, json=payload, verify=False)
 
     if (r.status_code == 200):
         return r.json()[u'response'][u'serviceTicket']
@@ -37,7 +37,7 @@ def get_app_id(service_ticket, app_name):
     reqUrl = "https://{0}/api/v1/application?name={1}".format(apic, app_name)
     header = {"X-Auth-Token": service_ticket}
 
-    r = requests.get(reqUrl, headers=header)
+    r = requests.get(reqUrl, headers=header, verify=False)
 
     if (r.status_code == 200):
         return r.json()['response'][0]['id']
@@ -49,7 +49,7 @@ def get_policy(service_ticket, policy_scope):
     reqUrl = "https://{0}/api/v1/policy?policyScope={1}".format(apic, policy_scope)
     header = {"X-Auth-Token": service_ticket}
 
-    r = requests.get(reqUrl, headers=header)
+    r = requests.get(reqUrl, headers=header, verify=False)
 
     if r.status_code == 200:
         return r.json()
@@ -129,7 +129,7 @@ def put_policy_update(service_ticket, policy, policy_scope):
         reqUrl = "https://{0}/api/v1/policy".format(apic)
         header = {"X-Auth-Token": service_ticket, "Content-type":"application/json"}
 
-        r = requests.put(reqUrl, headers=header, json=policy['response'])
+        r = requests.put(reqUrl, headers=header, json=policy['response'], verify=False)
 
         if r.status_code == 202:
             task_id = r.json()['response']['taskId']
@@ -147,7 +147,7 @@ def get_task(service_ticket, task_id):
     reqUrl = "https://{0}/api/v1/task/{1}".format(apic, task_id)
     header = {"X-Auth-Token": service_ticket, "Content-type": "application/json"}
 
-    r = requests.get(reqUrl, headers=header)
+    r = requests.get(reqUrl, headers=header, verify=False)
 
     if r.status_code == 200:
         return r.json()
@@ -159,7 +159,7 @@ def get_policy_scope(service_ticket):
     reqUrl = "https://{0}/api/v1/policy/tag".format(apic)
     header = {"X-Auth-Token": service_ticket}
 
-    r = requests.get(reqUrl, headers=header)
+    r = requests.get(reqUrl, headers=header, verify=False)
 
     if r.status_code == 200:
         list = []
@@ -175,7 +175,7 @@ def get_applications(service_ticket, policy_scope):
     reqUrl = "https://{0}/api/v1/policy?policyScope={1}".format(apic, policy_scope)
     header = {"X-Auth-Token": service_ticket}
 
-    r = requests.get(reqUrl, headers=header)
+    r = requests.get(reqUrl, headers=header, verify=False)
 
     if r.status_code == 200:
         list = []
