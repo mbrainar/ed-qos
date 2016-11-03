@@ -63,10 +63,11 @@ def get_policy(service_ticket, policy_scope):
 # Expected result is either business relevant, irrelevant or default
 def get_app_state(policy, app_id, app_name):
     for item in policy['response']:
-        if {'appName': app_name, 'id': app_id} in item['resource']['applications']:
-            return item['actionProperty']['relevanceLevel']
-        else:
-            continue
+        for apps in item['resource']['applications']:
+            if app_name in apps.values():
+                return item['actionProperty']['relevanceLevel']
+            else:
+                continue
 
 # Rewrites the policy based on the external event status; if no change is needed, returns false
 def update_app_state(service_ticket, event_status, policy, app_list):
