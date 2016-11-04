@@ -225,5 +225,5 @@ new.write(json.dumps(update_app_state(service_ticket,True,get_policy(service_tic
 old.close()
 new.close()
 
-#print put_policy_update(service_ticket,update_app_state(service_ticket,False,get_policy(service_ticket,policy_scope),app_list),policy_scope)
+print put_policy_update(service_ticket,update_app_state(service_ticket,False,get_policy(service_ticket,policy_scope),app_list),policy_scope)
 '''
