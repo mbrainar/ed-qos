@@ -89,7 +89,7 @@ def close_db(error):
 @app.route('/')
 def home():
     policy_tag = request.args.get('selected')
-    policies = apic.get_policy_scope(apic.get_ticket())
+    policies = apic.get_policy_scope(apic.get_ticket(apic.username,apic.password))
     return render_template('index.html', policies=policies, policy_tag=policy_tag,
                            title='Event Driven QoS')
 
@@ -111,7 +111,7 @@ def get_apps():
 def check_relevant():
     app = request.args.get('app')
     policy_tag = request.args.get('policy')
-    ticket = apic.get_ticket()
+    ticket = apic.get_ticket(apic.username,apic.password)
     app_id = apic.get_app_id(ticket, app)
     policy = apic.get_policy(ticket, policy_tag)
     return apic.get_app_state(policy, app_id, app)
@@ -169,7 +169,7 @@ def event_on():
     app_list = []
     for app in saved_apps:
         app_list.append(app['app'])
-    service_ticket = apic.get_ticket()
+    service_ticket = apic.get_ticket(apic.username,apic.password)
     return apic.put_policy_update(service_ticket,
                                   apic.update_app_state(service_ticket,
                                                         event_status,
@@ -191,7 +191,7 @@ def event_off():
     for app in saved_apps:
         app_list.append(app['app'])
     # return str(app_list)
-    service_ticket = apic.get_ticket()
+    service_ticket = apic.get_ticket(apic.username, apic.password)
     return apic.put_policy_update(service_ticket,
                                   apic.update_app_state(service_ticket,
                                                         event_status,
