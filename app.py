@@ -144,9 +144,10 @@ def save_config():
     apps = applist[0].split(",")
     db = get_db()
     cur = db.execute('delete from edqos')
-    for item in apps:
-        cur = db.execute('insert into edqos (policy, app) values (?,?)',
-                         [policy_tag, item])
+    if apps != [u'']:
+        for item in apps:
+            cur = db.execute('insert into edqos (policy, app) values (?,?)',
+                             [policy_tag, item])
     db.commit()
     return jsonify(applist)
 
