@@ -122,7 +122,7 @@ def check_relevant():
 @app.route('/configure/')
 def configure():
     policy = request.args.get('policy')
-    app_list = apic.get_applications(apic.get_ticket(),policy)
+    app_list = apic.get_applications(apic.get_ticket(apic.username,apic.password),policy)
     db = get_db()
     cur = db.execute('select id, policy, app from edqos where policy = ?', tuple([policy]))
     entries = cur.fetchall()
